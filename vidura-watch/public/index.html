@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vidura's Watch — Community Fraud Alerts</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">🛡️</span>
+    <div>
+      <h1>Vidura's Watch</h1>
+      <p class="tagline">Anticipatory counsel for a scam-prone world</p>
+    </div>
+  </div>
+  <div id="auth-area" class="auth-area"></div>
+</header>
+
+<div id="header-quote" class="header-quote"></div>
+
+<main>
+
+  <section id="login-panel" class="card login-card">
+    <div class="intro-box">
+      <div class="intro-mark">🪔</div>
+      <p id="intro-text" class="intro-text"></p>
+      <p id="intro-citation" class="intro-citation"></p>
+    </div>
+    <h2>Enter a username to begin</h2>
+    <p class="muted">No password needed for this prototype — pick any name to see how reputation builds over time.</p>
+    <form id="login-form">
+      <input type="text" id="username-input" placeholder="e.g. anita_chennai" required minlength="2" />
+      <button type="submit">Continue</button>
+    </form>
+  </section>
+
+  <div id="app-panel" class="hidden">
+
+    <section class="card">
+      <h2>Report a suspicious message</h2>
+      <p class="muted">Paste or type it below. Phone numbers, emails and long ID numbers are automatically redacted before anything is stored or shown.</p>
+      <form id="report-form">
+        <textarea id="message-text" rows="4" placeholder="e.g. Congratulations! You've been selected for a work from home job. Pay ₹499 registration fee within 15 minutes: http://bit.ly/xyz123" required></textarea>
+        <div class="form-row">
+          <select id="category" required>
+            <option value="">Category</option>
+            <option value="job_scam">Fake job offer</option>
+            <option value="bank_kyc">Fake bank / KYC alert</option>
+            <option value="delivery">Fake delivery fee</option>
+            <option value="lottery">Lottery / prize scam</option>
+            <option value="other">Other</option>
+          </select>
+          <input type="text" id="city" placeholder="City (e.g. Chennai)" required />
+          <input type="text" id="language" placeholder="Language (e.g. Tamil)" required />
+        </div>
+        <button type="submit">Submit report</button>
+      </form>
+      <div id="submit-status" class="muted"></div>
+      <p class="mini-quote" id="submit-quote"></p>
+    </section>
+
+    <section class="card">
+      <div class="dashboard-header">
+        <h2>Community dashboard</h2>
+        <div class="filters">
+          <input type="text" id="filter-city" placeholder="Filter by city" />
+          <input type="text" id="filter-language" placeholder="Filter by language" />
+          <select id="filter-status">
+            <option value="">All statuses</option>
+            <option value="unverified">Unverified</option>
+            <option value="disputed">Disputed</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="verified_legit">Verified legit</option>
+          </select>
+          <button id="refresh-btn">Refresh</button>
+        </div>
+      </div>
+      <div id="reports-list" class="reports-list"></div>
+    </section>
+
+  </div>
+
+  <div id="detail-modal" class="modal hidden">
+    <div class="modal-content">
+      <button id="close-modal" class="close-btn">&times;</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p id="footer-quote-text">Built around Vidura's counsel from the Mahābhārata — trust earned through accuracy, and evidence over volume.</p>
+  <p id="footer-quote-citation" class="footer-citation"></p>
+</footer>
+
+<script src="quotes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
