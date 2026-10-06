@@ -7,31 +7,31 @@
 
 const VIDURA_QUOTES = {
   unverified: {
-    text: "One should weigh carefully whether a thing can truly be relied upon before accepting it as one's own.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva (Prajagara Parva), Ch. 34",
+    text: "Do not yet accept this warning as settled; examine it carefully before you act.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   disputed: {
-    text: "Agreement among many is not by itself proof. What is claimed must still be tested against what can be verified.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva (Prajagara Parva), Ch. 34",
+    text: "You have heard opposing signs; let neither the crowd nor suspicion alone command your trust.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   confirmed: {
-    text: "When testimony and evidence together point the same way, the warning may be trusted and acted upon.",
-    citation: "Adapted from the reasoning of Vidura Niti, Udyoga Parva",
+    text: "The testimony and the independent signs agree: heed this warning, and do not send what is asked.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   verified_legit: {
-    text: "The wise, having examined a matter carefully and from every side, need not fear it any longer.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva (Prajagara Parva)",
+    text: "The testimony and the evidence both counsel trust; still, share no secret you would not share openly.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   pending: {
-    text: "Let the matter first be examined; judgment given in haste is judgment given carelessly.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva (Prajagara Parva)",
+    text: "Let the matter be examined before judgment is spoken; haste can make the careful pay dearly.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
 };
 
 // Fallback used if a status somehow has no matching quote above.
 const DEFAULT_QUOTE = {
-  text: "A person is known as wise not by what they claim, but by how carefully they examine before they speak.",
-  citation: "Adapted from Vidura Niti, Udyoga Parva (Prajagara Parva)",
+  text: "Examine the matter from every side before you lend it your trust.",
+  citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
 };
 
 function getViduraQuote(status) {
@@ -47,31 +47,31 @@ const VIDURA_INTRO = {
     "before it arrived, and weighed every claim carefully before trusting it. This site is built " +
     "on that same discipline: no warning here is trusted simply because many voices repeat it. " +
     "It must also be tested against evidence, exactly as Vidura himself counselled.",
-  citation: "Inspired by Vidura Niti, Udyoga Parva (Prajagara Parva), Mahābhārata",
+  citation: "Inspired by the Prajagara Parva, Udyoga Parva, trans. K. M. Ganguli, Sections XXXIII-XL",
 };
 
 // A rotating pool of shorter lines used in the header/footer/sections so the
 // Mahabharata connection is visible on every page, not just the report modal.
 const VIDURA_GENERAL_QUOTES = [
   {
-    text: "The learned examine a matter carefully and from every side before placing their trust in it.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva",
+    text: "Examine the matter from every side before you place your trust in it.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   {
-    text: "A wrong done in haste returns, in the end, upon the one who was hasty.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva, Ch. 34",
+    text: "Do not act in haste; the cost of a careless choice may return to you.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   {
-    text: "One who speaks only what is asked, and only what is true, is counted among the wise.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva",
+    text: "Speak what is true, even when a pleasing falsehood would be easier.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   {
-    text: "Forewarned counsel, given in time, has saved kingdoms that force alone could not.",
-    citation: "Adapted from the spirit of Vidura's counsel, Udyoga Parva",
+    text: "Take warning while there is time to act; regret cannot undo a danger ignored.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
   {
-    text: "Neither praise nor the crowd's applause should move one who seeks the truth of a matter.",
-    citation: "Adapted from Vidura Niti, Udyoga Parva",
+    text: "Let neither praise nor the crowd's applause decide what you know to be true.",
+    citation: "Adapted from Vidura Niti, Udyoga Parva, Prajagara Parva, Sections XXXIII-XL, trans. K. M. Ganguli",
   },
 ];
 

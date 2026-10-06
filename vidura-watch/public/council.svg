@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 152" fill="none" role="img" aria-label="Two counselors beneath an arch, with a lamp between them">
+  <path d="M33 137V80C33 39 66 13 108 13h144c42 0 75 26 75 67v57" stroke="#a7643d" stroke-width="3"/>
+  <path d="M49 137V82c0-32 25-52 59-52h144c34 0 59 20 59 52v55" stroke="#dfc99e" stroke-width="2"/>
+  <path d="M30 138h300" stroke="#96795a" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="108" cy="62" r="13" fill="#4c7772"/>
+  <path d="M83 131c2-31 10-48 25-48s23 17 25 48H83Z" fill="#4c7772"/>
+  <path d="M95 91c7 8 19 8 26 0" stroke="#d6e0d2" stroke-width="2"/>
+  <circle cx="252" cy="62" r="13" fill="#b47747"/>
+  <path d="M227 131c2-31 10-48 25-48s23 17 25 48h-50Z" fill="#b47747"/>
+  <path d="M239 91c7 8 19 8 26 0" stroke="#f3ddbd" stroke-width="2"/>
+  <path d="M180 66c-1 5-6 8-5 13 1 4 9 4 10 0 2-4-2-8-5-13Z" fill="#e7a13d"/>
+  <path d="M160 102c1 10 9 17 20 17s19-7 20-17h-40Z" fill="#a84f34" stroke="#793725" stroke-width="2"/>
+  <path d="M158 102h44m-34 8h24" stroke="#f1bd68" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -2,15 +2,13 @@
 // Casting a vote never "confirms" anything by itself. It recomputes the
 // reputation-weighted community score and re-runs decideStatus(), which
 // only moves a report to 'confirmed' when votes AND evidence agree.
-// Once enough votes are in for the first time, this also triggers the
-// AI-agent verification pass (lib/ai_verify.js) -- a genuinely separate,
-// third signal on top of the crowd and the rule-based evidence check.
+// The AI assessment is started independently by report submission; votes
+// only update the community-plus-evidence status.
 
 const express = require("express");
 const { nanoid } = require("nanoid");
 const db = require("../lib/db");
-const { computeCommunityScore, decideStatus, MIN_DISTINCT_VOTERS } = require("../lib/reputation");
-const { runAIVerification } = require("../lib/ai_verify");
+const { computeCommunityScore, decideStatus } = require("../lib/reputation");
 
 const router = express.Router();
 
@@ -50,26 +48,6 @@ router.post("/", async (req, res) => {
   });
 
   db.prepare("UPDATE reports SET status = ? WHERE id = ?").run(newStatus, reportId);
-
-  // Trigger the AI-agent pass the first time this report reaches the
-  // minimum number of distinct voters and hasn't been AI-checked yet.
-  // This keeps it a one-time "final counsel" step rather than re-running
-  // on every single vote.
-  if (distinctVoters >= MIN_DISTINCT_VOTERS && !report.ai_verdict) {
-    const evidenceDetails = report.evidence_details ? JSON.parse(report.evidence_details) : null;
-    const aiResult = await runAIVerification({
-      messageText: report.message_text,
-      category: report.category,
-      evidenceVerdict: report.evidence_verdict,
-      evidenceDetails,
-      communityScore: score,
-      distinctVoters,
-    });
-    db.prepare("UPDATE reports SET ai_verdict = ? WHERE id = ?").run(
-      JSON.stringify(aiResult),
-      reportId
-    );
-  }
 
   const updated = db.prepare("SELECT * FROM reports WHERE id = ?").get(reportId);
   res.json({

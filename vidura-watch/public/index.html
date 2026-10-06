@@ -10,7 +10,7 @@
 
 <header class="topbar">
   <div class="brand">
-    <span class="brand-mark">🛡️</span>
+    <img class="brand-mark" src="diya.svg" alt="" />
     <div>
       <h1>Vidura's Watch</h1>
       <p class="tagline">Anticipatory counsel for a scam-prone world</p>
@@ -25,12 +25,12 @@
 
   <section id="login-panel" class="card login-card">
     <div class="intro-box">
-      <div class="intro-mark">🪔</div>
+      <img class="council-art" src="council.svg" alt="Two counselors beneath an arch, with a lamp between them" />
       <p id="intro-text" class="intro-text"></p>
       <p id="intro-citation" class="intro-citation"></p>
     </div>
     <h2>Enter a username to begin</h2>
-    <p class="muted">No password needed for this prototype — pick any name to see how reputation builds over time.</p>
+    <p class="muted">No password is required here. Choose a name, and let your judgments earn their weight.</p>
     <form id="login-form">
       <input type="text" id="username-input" placeholder="e.g. anita_chennai" required minlength="2" />
       <button type="submit">Continue</button>
@@ -39,11 +39,11 @@
 
   <div id="app-panel" class="hidden">
 
-    <section class="card">
+    <section class="card report-entry">
       <h2>Report a suspicious message</h2>
-      <p class="muted">Paste or type it below. Phone numbers, emails and long ID numbers are automatically redacted before anything is stored or shown.</p>
+      <p class="muted">Set down the message as received. Personal numbers, email addresses and long ID numbers are removed before it is kept or shared.</p>
       <form id="report-form">
-        <textarea id="message-text" rows="4" placeholder="e.g. Congratulations! You've been selected for a work from home job. Pay ₹499 registration fee within 15 minutes: http://bit.ly/xyz123" required></textarea>
+        <textarea id="message-text" rows="4" placeholder="A message that urges you to pay quickly, share a code, or follow an unfamiliar link..." required></textarea>
         <div class="form-row">
           <select id="category" required>
             <option value="">Category</option>
@@ -56,7 +56,7 @@
           <input type="text" id="city" placeholder="City (e.g. Chennai)" required />
           <input type="text" id="language" placeholder="Language (e.g. Tamil)" required />
         </div>
-        <button type="submit">Submit report</button>
+        <button type="submit">Bring this warning</button>
       </form>
       <div id="submit-status" class="muted"></div>
       <p class="mini-quote" id="submit-quote"></p>
@@ -75,7 +75,7 @@
             <option value="confirmed">Confirmed</option>
             <option value="verified_legit">Verified legit</option>
           </select>
-          <button id="refresh-btn">Refresh</button>
+          <button id="refresh-btn">Hear latest counsel</button>
         </div>
       </div>
       <div id="reports-list" class="reports-list"></div>
@@ -93,6 +93,7 @@
 </main>
 
 <footer>
+  <img class="footer-lamp" src="diya.svg" alt="" />
   <p id="footer-quote-text">Built around Vidura's counsel from the Mahābhārata — trust earned through accuracy, and evidence over volume.</p>
   <p id="footer-quote-citation" class="footer-citation"></p>
 </footer>

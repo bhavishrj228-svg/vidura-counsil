@@ -3,14 +3,6 @@
 // three API route groups. Run with: npm start (see README.md).
 
 require("dotenv").config();
-console.log(
-  "Anthropic key check:",
-  !!process.env.ANTHROPIC_API_KEY,
-  "prefix:",
-  process.env.ANTHROPIC_API_KEY?.slice(0, 12),
-  "length:",
-  process.env.ANTHROPIC_API_KEY?.length
-);
 const express = require("express");
 const cors = require("cors");
 const path = require("path");

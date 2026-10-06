@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="Oil lamp with a flame">
+  <path d="M24 5c-1 5-6 7-5 12 1 4 8 4 10 0 2-4-2-8-5-12Z" fill="#e8a43a" stroke="#f6d37a" stroke-width="1.5"/>
+  <path d="M24 11c0 3-3 4-2 7 1 2 4 2 5 0 1-2-1-5-3-7Z" fill="#fff1bb"/>
+  <path d="M9 24c1 8 7 14 15 14s14-6 15-14H9Z" fill="#b85d36" stroke="#7c3828" stroke-width="2"/>
+  <path d="M7 24h34M13 30h22" stroke="#f1b35e" stroke-width="2" stroke-linecap="round"/>
+  <path d="M19 39h10" stroke="#7c3828" stroke-width="3" stroke-linecap="round"/>
+</svg>

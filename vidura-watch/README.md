@@ -76,21 +76,19 @@ To add Google's malicious-URL check:
 2. Put it in `.env` as `SAFE_BROWSING_API_KEY=your_key_here`
 3. Restart the server.
 
-### "Vidura's Judgment" — the AI agent
-Once a report has at least 3 distinct voters, the app automatically sends
-the (already-redacted) message, the community's vote, and the evidence
-result to an AI model (Claude) and asks for an independent judgment,
-phrased as counsel in Vidura's voice. This is a genuinely separate third
-signal — not the crowd, not the rule-based checks, but a language model
-actually reading and reasoning about the message.
+### "Vidura's Counsel" — the AI agent
+When a report is submitted, the app automatically sends its already-redacted
+message and available evidence to Claude for an independent judgment,
+phrased as counsel in Vidura's voice. It does not receive or wait for
+community votes, and it cannot change the report status: status is determined
+only by agreement between weighted testimony and independent evidence.
 
 1. Get a key at https://console.anthropic.com
 2. Put it in `.env` as `ANTHROPIC_API_KEY=your_key_here`
 3. (Optional) set `ANTHROPIC_MODEL=` to a different model string if you
    want to use a different Claude model than the default.
-4. Restart the server. Vote on a report from 3 different accounts and
-   open it — the "🪶 Vidura's Judgment (AI-verified)" panel will now show
-   a real AI-generated verdict instead of the "not configured" message.
+4. Restart the server and submit a report. Open it to see the independent
+   judgment as soon as the AI response is stored; no votes are required.
 
 Without a key, this section is still visible on every report — it just
 honestly says AI verification hasn't run, rather than faking a result.
@@ -161,9 +159,9 @@ change — the SQL is intentionally simple/portable.
   computed completely separately and only combined in `decideStatus()`
   — a report is never "confirmed" from votes alone.
 - **A third, independent signal — the AI agent** (`lib/ai_verify.js`):
-  once enough people vote, an AI model reads the actual message content
-  and gives its own judgment, phrased as counsel "in Vidura's voice."
-  This sits alongside, not instead of, the rule-based evidence check.
+   on submission, an AI model reads the redacted message and evidence and
+   gives its own judgment, phrased as counsel "in Vidura's voice." It never
+   sees or waits for votes and cannot decide status.
 - **Reputation is earned, not assumed**: every user starts at the same
   reputation (1.0) and it only moves after a moderator resolves a report.
 - **Appeals path**: filing a rebuttal always pauses a report back to
@@ -175,3 +173,11 @@ change — the SQL is intentionally simple/portable.
   and a "Vidura's Verdict" quote panel plus an AI-generated "Vidura's
   Judgment" panel on every report (see `public/quotes.js` for the full
   quote library and citations).
+
+## Mahabharata source
+
+The introductory context and adapted counsel draw on the Prajagara Parva
+(Vidura Niti), Udyoga Parva, Sections XXXIII-XL, in Kisari Mohan Ganguli's
+English translation, *The Mahabharata of Krishna-Dwaipayana Vyasa*
+(1883-1896; public domain). Interface lines are paraphrases, not verbatim
+quotations, and are labeled as adapted from this source.

@@ -2,7 +2,7 @@
 // Plain vanilla JS -- no build step needed, easy to read line by line
 // for a viva/demo walkthrough.
 
-const state = { user: null };
+const state = { user: null, detailReportId: null };
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -17,7 +17,7 @@ $("#login-form").addEventListener("submit", async (e) => {
     body: JSON.stringify({ username }),
   });
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
+  if (!res.ok) return alert("Vidura counsels: " + data.error);
 
   state.user = data.user;
   localStorage.setItem("vidura_user_id", data.user.id);
@@ -86,7 +86,7 @@ function renderStaticQuotes() {
 $("#report-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const statusEl = $("#submit-status");
-  statusEl.textContent = "Submitting and running evidence check (this can take a few seconds)...";
+  statusEl.textContent = "I am weighing the evidence and seeking independent counsel...";
 
   const body = {
     userId: state.user.id,
@@ -104,13 +104,14 @@ $("#report-form").addEventListener("submit", async (e) => {
   const data = await res.json();
 
   if (!res.ok) {
-    statusEl.textContent = "Error: " + data.error;
+    statusEl.textContent = "Vidura counsels: " + data.error;
     return;
   }
 
-  statusEl.textContent = "Submitted. Evidence verdict: " + data.report.evidence_verdict;
+  statusEl.textContent = "Your warning is recorded. The evidence and independent counsel will be shown beside the community's testimony.";
   $("#report-form").reset();
-  loadReports();
+  await loadReports();
+  await openDetail(data.report.id);
 });
 
 // ---------- DASHBOARD ----------
@@ -152,10 +153,10 @@ function renderReports(reports) {
     <div class="report-card" onclick="openDetail('${r.id}')">
       <div class="report-top">
         <span class="status-pill status-${r.status}">${statusLabel(r.status)}</span>
-        <span class="muted">${r.category.replace("_"," ")}</span>
+        <span class="muted">${escapeHtml(r.category.replace("_"," "))}</span>
       </div>
       <p class="report-text">${escapeHtml(r.message_text)}</p>
-      <div class="report-meta">${r.city} · ${r.language} · evidence: ${r.evidence_verdict}</div>
+      <div class="report-meta">${escapeHtml(r.city)} · ${escapeHtml(r.language)} · evidence: ${escapeHtml(r.evidence_verdict)}</div>
     </div>
   `
     )
@@ -178,6 +179,7 @@ function formatScore(score) {
 // ---------- DETAIL MODAL ----------
 
 async function openDetail(id) {
+  state.detailReportId = id;
   const res = await fetch(`/api/reports/${id}`);
   const data = await res.json();
   const r = data.report;
@@ -191,26 +193,26 @@ async function openDetail(id) {
     .join("");
 
   const quote = getViduraQuote(r.status);
-  const aiHtml = renderAIVerdict(r.ai_verdict, data.distinctVoters);
+  const aiHtml = renderAIVerdict(r.ai_verdict);
 
   $("#detail-content").innerHTML = `
     <span class="status-pill status-${r.status}">${statusLabel(r.status)}</span>
     <p class="report-text" style="margin-top:12px;">${escapeHtml(r.message_text)}</p>
-    <div class="report-meta">${escapeHtml(r.city)} · ${escapeHtml(r.language)} · ${r.category.replace("_"," ")}</div>
+    <div class="report-meta">${escapeHtml(r.city)} · ${escapeHtml(r.language)} · ${escapeHtml(r.category.replace("_"," "))}</div>
 
     <div class="verdict-box">
-      <div class="verdict-label">🪔 Vidura's Verdict</div>
+      <div class="verdict-label">Vidura's Verdict</div>
       <p class="verdict-quote">"${escapeHtml(quote.text)}"</p>
       <p class="verdict-citation">${escapeHtml(quote.citation)}</p>
     </div>
 
     <div class="evidence-box">
-      <strong>Independent evidence check</strong>
+      <strong>Independent evidence</strong>
       ${evidenceHtml}
     </div>
 
     <div class="votes-box">
-      <strong>How many have spoken, and how much their word is worth</strong>
+      <strong>Community testimony</strong>
       <p class="muted" style="margin:4px 0 8px;">
         ${data.distinctVoters} voter(s) so far · reputation-weighted score: ${formatScore(data.communityScore)}
         (positive leans toward scam, negative leans toward legitimate)
@@ -226,25 +228,32 @@ async function openDetail(id) {
     ${aiHtml}
 
     <div class="rebuttal-box">
-      <strong>Rebuttal / appeal</strong>
+      <strong>A challenge to this counsel</strong>
       ${rebuttalsHtml || '<p class="muted">No rebuttals filed.</p>'}
       <form onsubmit="submitRebuttal(event, '${r.id}')" style="margin-top:8px;">
-        <textarea id="rebuttal-text" rows="2" placeholder="Explain why this report is wrong..."></textarea>
-        <button type="submit" class="secondary" style="margin-top:6px;">File rebuttal</button>
+        <textarea id="rebuttal-text" rows="2" placeholder="Set forth the evidence that should cause this judgment to be reconsidered..."></textarea>
+        <button type="submit" class="secondary" style="margin-top:6px;">Offer a rebuttal</button>
       </form>
     </div>
 
     <div class="rebuttal-box">
-      <strong>Moderator resolution (demo only)</strong>
-      <p class="muted">In a real deployment this is restricted to trained moderators/admins.</p>
+      <strong>Moderator's final review</strong>
+      <p class="muted">A human moderator must settle the matter before reputations are adjusted.</p>
       <div class="vote-buttons">
-        <button onclick="resolveReport('${r.id}', true)">Confirm: this IS a scam</button>
-        <button onclick="resolveReport('${r.id}', false)">Confirm: this is legitimate</button>
+        <button onclick="resolveReport('${r.id}', true)">The warning is upheld</button>
+        <button onclick="resolveReport('${r.id}', false)">The warning is unfounded</button>
       </div>
     </div>
   `;
 
   $("#detail-modal").classList.remove("hidden");
+  if (!r.ai_verdict) {
+    window.setTimeout(() => {
+      if (state.detailReportId === id && !$("#detail-modal").classList.contains("hidden")) {
+        openDetail(id);
+      }
+    }, 1800);
+  }
 }
 window.openDetail = openDetail;
 
@@ -256,34 +265,27 @@ function voteLabel(voteType) {
   }[voteType] || voteType;
 }
 
-function renderAIVerdict(aiVerdict, distinctVoters) {
-  const MIN_VOTERS_FOR_AI = 3; // keep in sync with lib/reputation.js MIN_DISTINCT_VOTERS
+function renderAIVerdict(aiVerdict) {
+  const label = "Vidura's Counsel · Independent AI assessment";
   if (!aiVerdict) {
-    if (distinctVoters < MIN_VOTERS_FOR_AI) {
-      return `
-        <div class="ai-box">
-          <div class="verdict-label">🪶 Vidura's Judgment (AI-verified)</div>
-          <p class="muted">Vidura withholds final judgment until at least ${MIN_VOTERS_FOR_AI} people have spoken. ${distinctVoters} so far.</p>
-        </div>`;
-    }
     return `
       <div class="ai-box">
-        <div class="verdict-label">🪶 Vidura's Judgment (AI-verified)</div>
-        <p class="muted">Judgment has not yet been sought, or is being formed. Refresh in a moment.</p>
+        <div class="verdict-label">${label}</div>
+        <p class="muted">I am examining the redacted message and available evidence independently; the community need not speak first.</p>
       </div>`;
   }
   if (!aiVerdict.ran) {
     return `
       <div class="ai-box">
-        <div class="verdict-label">🪶 Vidura's Judgment (AI-verified)</div>
+        <div class="verdict-label">${label}</div>
         <p class="muted">${escapeHtml(aiVerdict.note || "AI verification unavailable.")}</p>
       </div>`;
   }
   return `
     <div class="ai-box">
-      <div class="verdict-label">🪶 Vidura's Judgment (AI-verified — confidence: ${aiVerdict.confidence})</div>
+      <div class="verdict-label">${label} · confidence: ${escapeHtml(aiVerdict.confidence)}</div>
       <p class="verdict-quote">"${escapeHtml(aiVerdict.counsel)}"</p>
-      <p class="verdict-citation">AI-agent assessment: <strong>${aiVerdict.verdict}</strong></p>
+      <p class="verdict-citation">My independent judgment: <strong>${escapeHtml(aiVerdict.verdict)}</strong></p>
     </div>`;
 }
 
@@ -294,7 +296,7 @@ function renderEvidence(details) {
     const d = details[key];
     if (!d) continue;
     const cls = d.flagged || (d.ageDays !== null && d.ageDays < 60) ? "evidence-flag" : "evidence-clear";
-    lines.push(`<div class="evidence-line ${d.checked ? cls : ''}">${d.note}</div>`);
+    lines.push(`<div class="evidence-line ${d.checked ? cls : ''}">${escapeHtml(d.note)}</div>`);
   }
   return lines.join("") || `<p class="muted">No checkable signals (no URL/phone found).</p>`;
 }
@@ -306,8 +308,12 @@ async function castVote(reportId, voteType) {
     body: JSON.stringify({ reportId, userId: state.user.id, voteType }),
   });
   const data = await res.json();
-  if (!res.ok) return alert(data.error);
-  openDetail(reportId);
+  if (!res.ok) return alert("Vidura counsels: " + data.error);
+  await openDetail(reportId);
+  const feedback = document.createElement("p");
+  feedback.className = "muted";
+  feedback.textContent = "I have heard your testimony; no single voice settles this matter.";
+  $("#detail-content").prepend(feedback);
   loadReports();
 }
 window.castVote = castVote;
@@ -316,29 +322,40 @@ async function submitRebuttal(e, reportId) {
   e.preventDefault();
   const explanation = $("#rebuttal-text").value.trim();
   if (!explanation) return;
-  await fetch(`/api/reports/${reportId}/rebuttal`, {
+  const res = await fetch(`/api/reports/${reportId}/rebuttal`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId: state.user.id, explanation }),
   });
-  openDetail(reportId);
+  if (!res.ok) return alert("Vidura counsels: your appeal could not be entered.");
+  await openDetail(reportId);
+  const feedback = document.createElement("p");
+  feedback.className = "muted";
+  feedback.textContent = "I have heard your appeal; this warning returns to examination.";
+  $("#detail-content").prepend(feedback);
   loadReports();
 }
 window.submitRebuttal = submitRebuttal;
 
 async function resolveReport(reportId, finalWasScam) {
-  await fetch(`/api/reports/${reportId}/resolve`, {
+  const res = await fetch(`/api/reports/${reportId}/resolve`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ finalWasScam }),
   });
-  openDetail(reportId);
+  if (!res.ok) return alert("Vidura counsels: the final review could not be recorded.");
+  await openDetail(reportId);
+  const feedback = document.createElement("p");
+  feedback.className = "muted";
+  feedback.textContent = "The moderator's finding has been recorded; let the evidence guide what you do next.";
+  $("#detail-content").prepend(feedback);
   loadReports();
 }
 window.resolveReport = resolveReport;
 
 $("#close-modal").addEventListener("click", () => {
   $("#detail-modal").classList.add("hidden");
+  state.detailReportId = null;
 });
 
 // ---------- INIT ----------

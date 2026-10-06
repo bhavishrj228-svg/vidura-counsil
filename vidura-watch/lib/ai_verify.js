@@ -1,13 +1,8 @@
 // lib/ai_verify.js
 //
-// This is the "AI agent" layer: once a report has enough votes AND an
-// evidence-check result, this module sends the message plus that context
-// to an external AI model (Claude, via the Anthropic API) and asks it to
-// give an independent second opinion -- phrased as a short piece of
-// counsel "in Vidura's voice" -- on top of the rule-based evidence check
-// in lib/evidence.js. This is a genuinely separate, third signal: not the
-// crowd, not the WHOIS/URL checks, but a language model actually reading
-// the message's content and reasoning about it.
+// The AI agent is an independent signal, started when a report is
+// submitted. It reads the redacted message and objective evidence, never
+// the community's vote count or reputation-weighted score.
 //
 // Requires an ANTHROPIC_API_KEY in your .env file. Get one at
 // https://console.anthropic.com -- without a key, this module returns a
@@ -26,21 +21,18 @@ reported as a possible scam.
 
 You will be given:
 - the reported message (with personal details already redacted)
-- what the community of users voted (suspicious vs. trustworthy, weighted by their track record)
 - what an automated evidence check found (domain age, known-bad-URL lists, previously confirmed
   scam numbers)
 
-Weigh all of this the way Vidura would: do not simply agree with the majority, and do not ignore
-evidence that contradicts popular belief. Give your own independent judgment of whether the
-message is a scam.
+Judge the message independently from the crowd. Treat inconclusive checks as unknown, not proof
+of safety. Give your own assessment of whether the message is a scam.
 
 Respond ONLY with a JSON object, no other text, in exactly this shape:
 {
   "verdict": "scam" | "legitimate" | "uncertain",
   "confidence": "low" | "medium" | "high",
-  "counsel": "A short (1-2 sentence) statement of your judgment, written in the wise, measured,
-              second-person-plural voice of a counselor addressing a court -- the way Vidura
-              addresses Dhritarashtra in the Mahābhārata. Do not mention that you are an AI."
+  "counsel": "A short (1-2 sentence) statement directly addressing the reader in Vidura's wise,
+              measured voice. Explain the reason for your judgment. Do not mention that you are an AI."
 }`;
 
 async function runAIVerification({
@@ -48,13 +40,11 @@ async function runAIVerification({
   category,
   evidenceVerdict,
   evidenceDetails,
-  communityScore,
-  distinctVoters,
 }) {
   if (!ANTHROPIC_API_KEY) {
     return {
       ran: false,
-      note: "AI verification not configured (no ANTHROPIC_API_KEY set) — see README.",
+      note: "I cannot offer an independent judgment until the counsel service is configured.",
     };
   }
 
@@ -63,11 +53,8 @@ async function runAIVerification({
 ${messageText}
 """
 
-Community voting: ${distinctVoters} distinct voter(s), reputation-weighted suspicion score = ${communityScore.toFixed(2)}
-(positive = crowd believes it's a scam, negative = crowd believes it's legitimate)
-
 Automated evidence check verdict: ${evidenceVerdict}
-Evidence details: ${JSON.stringify(evidenceDetails)}
+Evidence details: ${JSON.stringify(evidenceDetails || {})}
 
 Give your independent judgment as specified.`;
 
@@ -88,8 +75,11 @@ Give your independent judgment as specified.`;
     });
 
     if (!resp.ok) {
-      const errText = await resp.text();
-      return { ran: false, note: `AI API error (${resp.status}): ${errText.slice(0, 200)}` };
+      await resp.text();
+      return {
+        ran: false,
+        note: `I could not complete my independent reading (service error ${resp.status}).`,
+      };
     }
 
     const data = await resp.json();
@@ -109,7 +99,7 @@ Give your independent judgment as specified.`;
       counsel: parsed.counsel,
     };
   } catch (err) {
-    return { ran: false, note: "AI verification call failed: " + err.message };
+    return { ran: false, note: "I could not complete my independent reading; please return shortly." };
   }
 }
 

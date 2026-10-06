@@ -9,6 +9,7 @@ const { nanoid } = require("nanoid");
 const db = require("../lib/db");
 const { redactPII, extractSignals } = require("../lib/redact");
 const { runEvidenceCheck } = require("../lib/evidence");
+const { runAIVerification } = require("../lib/ai_verify");
 const {
   computeCommunityScore,
   decideStatus,
@@ -45,17 +46,44 @@ router.post("/", async (req, res) => {
     "UPDATE users SET reports_submitted = reports_submitted + 1 WHERE id = ?"
   ).run(userId);
 
-  // Run independent evidence check (this can take a couple seconds --
-  // that's expected and worth showing live in your demo).
-  const { verdict, results } = await runEvidenceCheck({
+  // Begin both independent checks on submission. The AI sees the redacted
+  // message immediately and is told evidence lookups are still in progress.
+  runAIVerification({
+    messageText: redactedText,
+    category,
+    evidenceVerdict: "pending",
+    evidenceDetails: { note: "Independent evidence checks are in progress." },
+  })
+    .then((aiResult) => {
+      db.prepare("UPDATE reports SET ai_verdict = ? WHERE id = ?").run(
+        JSON.stringify(aiResult),
+        id
+      );
+    })
+    .catch((err) => {
+      db.prepare("UPDATE reports SET ai_verdict = ? WHERE id = ?").run(
+        JSON.stringify({ ran: false, note: "I could not complete my independent reading; please return shortly." }),
+        id
+      );
+      console.error("AI verification persistence failed:", err.message);
+    });
+
+  const evidencePromise = runEvidenceCheck({
     domain,
     phone,
     rawText: messageText,
   });
+  const { verdict, results } = await evidencePromise;
 
+  const { score, distinctVoters } = computeCommunityScore(id);
+  const status = decideStatus({
+    communityScore: score,
+    distinctVoters,
+    evidenceVerdict: verdict,
+  });
   db.prepare(
-    "UPDATE reports SET evidence_verdict = ?, evidence_details = ? WHERE id = ?"
-  ).run(verdict, JSON.stringify(results), id);
+    "UPDATE reports SET evidence_verdict = ?, evidence_details = ?, status = ? WHERE id = ?"
+  ).run(verdict, JSON.stringify(results), status, id);
 
   const report = db.prepare("SELECT * FROM reports WHERE id = ?").get(id);
   res.json({ report: withParsedEvidence(report) });
